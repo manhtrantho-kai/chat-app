@@ -53,3 +53,19 @@ export interface Sticker {
   name: string
   url: string
 }
+
+export interface AuthResponse {
+  token: string
+  user: User
+}
+
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+export interface RegisterRequest {
+  username: string
+  email: string
+  password: string
+}

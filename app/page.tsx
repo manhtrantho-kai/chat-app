@@ -1,33 +1,26 @@
 "use client"
 
-import { useState } from "react"
-import { ServerSidebar } from "@/components/server-sidebar"
-import { ChannelSidebar } from "@/components/channel-sidebar"
-import { ChatArea } from "@/components/chat-area"
-import { mockClans, mockCategories, mockChannels } from "@/lib/mock-data"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
-export default function DiscordApp() {
-  const [selectedClanId, setSelectedClanId] = useState("1")
-  const [selectedChannelId, setSelectedChannelId] = useState("1")
+export default function HomePage() {
+  const router = useRouter()
+  const { user, isLoading } = useAuth()
 
-  const selectedClan = mockClans.find((c) => c.id === selectedClanId)
-  const clanCategories = mockCategories.filter((c) => c.clanId === selectedClanId)
-  const clanChannels = mockChannels.filter((c) => c.clanId === selectedClanId)
+  useEffect(() => {
+    if (!isLoading) {
+      if (user) {
+        router.push("/chat")
+      } else {
+        router.push("/login")
+      }
+    }
+  }, [user, isLoading, router])
 
   return (
-    <div className="flex h-screen overflow-hidden dark">
-      <ServerSidebar clans={mockClans} selectedClanId={selectedClanId} onSelectClan={setSelectedClanId} />
-      <ChannelSidebar
-        clan={selectedClan}
-        categories={clanCategories}
-        channels={clanChannels}
-        selectedChannelId={selectedChannelId}
-        onSelectChannel={setSelectedChannelId}
-      />
-      <ChatArea
-        channelId={selectedChannelId}
-        channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
-      />
+    <div className="flex h-screen items-center justify-center bg-[#313338]">
+      <div className="text-white">Đang tải...</div>
     </div>
   )
 }

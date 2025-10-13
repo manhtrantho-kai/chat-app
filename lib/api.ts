@@ -10,11 +10,13 @@ export class ApiClient {
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
     const response = await fetch(url, {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options?.headers,
       },
     })
@@ -86,6 +88,29 @@ export class ApiClient {
   // Sticker endpoints
   async getStickers() {
     return this.request("/stickers")
+  }
+
+  // Authentication endpoints
+  async login(username: string, password: string) {
+    return this.request<{ token: string; user: any }>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    })
+  }
+
+  async register(username: string, email: string, password: string) {
+    return this.request<{ token: string; user: any }>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ username, email, password }),
+    })
+  }
+
+  async getCurrentUser(token: string) {
+    return this.request("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
   }
 }
 
