@@ -10,6 +10,7 @@ import (
 type Config struct {
 	DatabaseURL string
 	ApiKey	  string
+	JWTSecret   string
 }
 
 func LoadConfig() *Config {
@@ -21,5 +22,6 @@ func LoadConfig() *Config {
 	return &Config{
 		DatabaseURL: os.Getenv("DATABASE_URL"),
 		ApiKey: os.Getenv("API_KEY"),
+		JWTSecret:   os.Getenv("JWT_SECRET"),
 	}
 }
