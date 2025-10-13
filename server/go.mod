@@ -1,10 +1,13 @@
 module server
 
-go 1.18
+go 1.21
+
+toolchain go1.24.4
 
 require (
 	github.com/gofiber/fiber/v2 v2.46.0
 	github.com/gofiber/websocket/v2 v2.2.1
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.7.0
 	gorm.io/driver/sqlite v1.6.0

@@ -8,23 +8,30 @@ func SetupRoutes(api *api.Api) {
 	app := api.App
 	apiGroup := app.Group("/api")
 
+	// Auth routes (không cần middleware)
+	apiGroup.Post("/auth/login", api.Login)
+	apiGroup.Post("/auth/register", api.Register)
+
+	// Các route cần xác thực
+	protected := apiGroup.Use(api.AuthMiddleware)
+
 	// Clans
-	apiGroup.Get("/clans", api.GetClans)
-	apiGroup.Get("/clans/:id", api.GetClanByID)
+	protected.Get("/clans", api.GetClans)
+	protected.Get("/clans/:id", api.GetClanByID)
 
 	// Categories
-	apiGroup.Get("/clans/:clanId/categories", api.GetCategoriesByClan)
+	protected.Get("/clans/:clanId/categories", api.GetCategoriesByClan)
 
 	// Channels
-	apiGroup.Get("/clans/:clanId/channels", api.GetChannelsByClan)
-	apiGroup.Get("/channels/:id", api.GetChannelByID)
+	protected.Get("/clans/:clanId/channels", api.GetChannelsByClan)
+	protected.Get("/channels/:id", api.GetChannelByID)
 
 	// Messages
-	apiGroup.Get("/channels/:channelId/messages", api.GetMessages)
-	apiGroup.Post("/channels/:channelId/messages", api.CreateMessage)
+	protected.Get("/channels/:channelId/messages", api.GetMessages)
+	protected.Post("/channels/:channelId/messages", api.CreateMessage)
 
 	// Stickers
-	apiGroup.Get("/stickers", api.GetStickers)
+	protected.Get("/stickers", api.GetStickers)
 
 	// WebSocket
 	app.Get("/ws", api.WebSocketHandler)
