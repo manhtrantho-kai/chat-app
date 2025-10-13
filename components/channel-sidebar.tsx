@@ -13,6 +13,7 @@ import {
 import { useAuth } from "@/contexts/auth-context"
 import type { Clan, Category, Channel } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 interface ChannelSidebarProps {
   clan?: Clan
@@ -30,6 +31,7 @@ export function ChannelSidebar({
   onSelectChannel,
 }: ChannelSidebarProps) {
   const { user, logout } = useAuth()
+  const router = useRouter()
 
   if (!clan) {
     return (
@@ -142,7 +144,12 @@ export function ChannelSidebar({
             <div className="truncate text-xs text-[#80848e]">#{user?.id.slice(0, 4) || "0000"}</div>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-[#b5bac1] hover:bg-[#35373c] hover:text-[#dbdee1]">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-[#b5bac1] hover:bg-[#35373c] hover:text-[#dbdee1]"
+          onClick={() => router.push("/settings")}
+        >
           <Settings className="h-5 w-5" />
         </Button>
         <Button
