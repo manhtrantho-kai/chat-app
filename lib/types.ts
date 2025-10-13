@@ -69,3 +69,11 @@ export interface RegisterRequest {
   email: string
   password: string
 }
+
+export interface UpdateUserRequest {
+  username?: string
+  email?: string
+  avatar?: string
+  currentPassword?: string
+  newPassword?: string
+}

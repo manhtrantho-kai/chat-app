@@ -11,9 +11,24 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>
   register: (username: string, email: string, password: string) => Promise<void>
   logout: () => void
+  updateUser: (data: any) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const MOCK_ADMIN = {
+  username: "admin",
+  password: "admin123",
+  user: {
+    id: "mock-admin-id",
+    username: "admin",
+    email: "admin@example.com",
+    avatar: "",
+    status: "online" as const,
+    createdAt: new Date().toISOString(),
+  },
+  token: "mock-admin-token-12345",
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -23,6 +38,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (token) {
+      if (token === MOCK_ADMIN.token) {
+        setUser(MOCK_ADMIN.user)
+        setIsLoading(false)
+        return
+      }
+
       apiClient
         .getCurrentUser(token)
         .then((userData) => setUser(userData as User))
@@ -36,6 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (username: string, password: string) => {
+    if (username === MOCK_ADMIN.username && password === MOCK_ADMIN.password) {
+      localStorage.setItem("token", MOCK_ADMIN.token)
+      setUser(MOCK_ADMIN.user)
+      router.push("/chat")
+      return
+    }
+
     const response = await apiClient.login(username, password)
     localStorage.setItem("token", response.token)
     setUser(response.user)
@@ -55,7 +83,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push("/login")
   }
 
-  return <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>{children}</AuthContext.Provider>
+  const updateUser = async (data: any) => {
+    if (!user) throw new Error("No user logged in")
+
+    const updatedUser = await apiClient.updateUser(user.id, data)
+    setUser(updatedUser as User)
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateUser }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {

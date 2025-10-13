@@ -1,5 +1,5 @@
 // API configuration for Go backend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
 export class ApiClient {
   private baseUrl: string
@@ -111,6 +111,34 @@ export class ApiClient {
         Authorization: `Bearer ${token}`,
       },
     })
+  }
+
+  // User endpoints
+  async updateUser(userId: string, data: any) {
+    return this.request(`/users/${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    })
+  }
+
+  async uploadAvatar(file: File) {
+    const formData = new FormData()
+    formData.append("avatar", file)
+
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+    const response = await fetch(`${this.baseUrl}/users/avatar`, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.statusText}`)
+    }
+
+    return response.json()
   }
 }
 

@@ -15,6 +15,7 @@ func main() {
 	config := config.LoadConfig()
 
 	db := database.Initialize(config.DatabaseURL)
+	database.SeedAdminUser(db)
 	defer database.Close()
 
 	app := fiber.New()
