@@ -15,6 +15,20 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+const MOCK_ADMIN = {
+  username: "admin",
+  password: "admin123",
+  user: {
+    id: "mock-admin-id",
+    username: "admin",
+    email: "admin@example.com",
+    avatar: "",
+    status: "online" as const,
+    createdAt: new Date().toISOString(),
+  },
+  token: "mock-admin-token-12345",
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -23,6 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (token) {
+      if (token === MOCK_ADMIN.token) {
+        setUser(MOCK_ADMIN.user)
+        setIsLoading(false)
+        return
+      }
+
       apiClient
         .getCurrentUser(token)
         .then((userData) => setUser(userData as User))
@@ -36,6 +56,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (username: string, password: string) => {
+    if (username === MOCK_ADMIN.username && password === MOCK_ADMIN.password) {
+      localStorage.setItem("token", MOCK_ADMIN.token)
+      setUser(MOCK_ADMIN.user)
+      router.push("/chat")
+      return
+    }
+
     const response = await apiClient.login(username, password)
     localStorage.setItem("token", response.token)
     setUser(response.user)
