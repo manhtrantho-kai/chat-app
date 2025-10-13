@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown, Hash, Volume2, Settings, UserPlus, Plus } from "lucide-react"
+import { ChevronDown, Hash, Volume2, Settings, UserPlus, Plus, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/contexts/auth-context"
 import type { Clan, Category, Channel } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
@@ -28,6 +29,8 @@ export function ChannelSidebar({
   selectedChannelId,
   onSelectChannel,
 }: ChannelSidebarProps) {
+  const { user, logout } = useAuth()
+
   if (!clan) {
     return (
       <div className="flex w-60 flex-col bg-[#2b2d31]">
@@ -119,16 +122,36 @@ export function ChannelSidebar({
       <div className="flex h-[52px] items-center gap-2 bg-[#232428] px-2">
         <div className="flex flex-1 items-center gap-2 overflow-hidden">
           <div className="relative">
-            <div className="h-8 w-8 rounded-full bg-[#5865f2]" />
-            <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#232428] bg-[#23a559]" />
+            {user?.avatar ? (
+              <img src={user.avatar || "/placeholder.svg"} alt={user.username} className="h-8 w-8 rounded-full" />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-[#5865f2]" />
+            )}
+            <div
+              className={cn(
+                "absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#232428]",
+                user?.status === "online" && "bg-[#23a559]",
+                user?.status === "idle" && "bg-[#f0b232]",
+                user?.status === "dnd" && "bg-[#f23f42]",
+                user?.status === "offline" && "bg-[#80848e]",
+              )}
+            />
           </div>
           <div className="flex-1 overflow-hidden">
-            <div className="truncate text-sm font-semibold text-white">CurrentUser</div>
-            <div className="truncate text-xs text-[#80848e]">#1234</div>
+            <div className="truncate text-sm font-semibold text-white">{user?.username || "User"}</div>
+            <div className="truncate text-xs text-[#80848e]">#{user?.id.slice(0, 4) || "0000"}</div>
           </div>
         </div>
         <Button variant="ghost" size="icon" className="h-8 w-8 text-[#b5bac1] hover:bg-[#35373c] hover:text-[#dbdee1]">
           <Settings className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-[#b5bac1] hover:bg-[#35373c] hover:text-[#f23f42]"
+          onClick={logout}
+        >
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </div>

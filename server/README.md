@@ -10,7 +10,7 @@ This project is a chat application backend built using the Fiber framework and S
 
 ## Project Structure
 
-```
+\`\`\`
 server
 ├── cmd
 │   └── main.go              # Entry point of the application
@@ -27,32 +27,32 @@ server
 ├── go.mod                   # Module definition
 ├── go.sum                   # Module checksums
 └── README.md                # Project documentation
-```
+\`\`\`
 
 ## Setup Instructions
 
 ### 1. Clone the repository
 
-```bash
+\`\`\`bash
 git clone <repository-url>
 cd server
-```
+\`\`\`
 
 ### 2. Install dependencies
 
 Make sure you have Go installed. Then run:
 
-```bash
+\`\`\`bash
 go mod tidy
-```
+\`\`\`
 
 ### 3. Run the application
 
 To start the server, run:
 
-```bash
+\`\`\`bash
 go run cmd/main.go
-```
+\`\`\`
 
 The server will start on `localhost:3000` by default.
 
