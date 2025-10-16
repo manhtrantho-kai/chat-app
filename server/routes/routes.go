@@ -34,7 +34,7 @@ func SetupRoutes(api *api.Api) {
 	protected.Get("/stickers", api.GetStickers)
 
 	// Files
-	protected.Post("/upload", api.UploadFile)
+	apiGroup.Post("/upload", api.UploadFile)
 
 	// WebSocket
 	app.Get("/ws", api.WebSocketHandler)
