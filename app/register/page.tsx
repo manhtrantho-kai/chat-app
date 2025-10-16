@@ -25,7 +25,7 @@ export default function RegisterPage() {
     try {
       await register(username, email, password)
     } catch (err) {
-      setError("Đăng ký thất bại. Vui lòng thử lại.")
+      setError(err instanceof Error ? err.message : "Đăng ký thất bại. Vui lòng thử lại.")
     } finally {
       setIsLoading(false)
     }

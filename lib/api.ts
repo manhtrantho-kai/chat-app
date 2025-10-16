@@ -98,17 +98,39 @@ export class ApiClient {
 
   // Authentication endpoints
   async login(username: string, password: string) {
-    return this.request<{ token: string; user: any }>("/auth/login", {
+    const response = await fetch(`${this.baseUrl}/auth/login`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ username, password }),
     })
+
+    const data = await response.json()
+
+    if (!response.ok || data.error) {
+      throw new Error(data.error || "Login failed")
+    }
+
+    return data
   }
 
   async register(username: string, email: string, password: string) {
-    return this.request<{ token: string; user: any }>("/auth/register", {
+    const response = await fetch(`${this.baseUrl}/auth/register`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ username, email, password }),
     })
+
+    const data = await response.json()
+
+    if (!response.ok || data.error) {
+      throw new Error(data.error || "Registration failed")
+    }
+
+    return data
   }
 
   async getCurrentUser(token: string) {
@@ -146,6 +168,30 @@ export class ApiClient {
     }
 
     return response.json()
+  }
+
+  // Clan management endpoints
+  async createClan(name: string, avatar: string) {
+    return this.request("/clans", {
+      method: "POST",
+      body: JSON.stringify({ name, avatar }),
+    })
+  }
+
+  // Category management endpoints
+  async createCategory(clanId: string, name: string, position: number) {
+    return this.request(`/clans/${clanId}/categories`, {
+      method: "POST",
+      body: JSON.stringify({ name, position }),
+    })
+  }
+
+  // Channel management endpoints
+  async createChannel(clanId: string, name: string, type: string, position: number) {
+    return this.request(`/clans/${clanId}/channels`, {
+      method: "POST",
+      body: JSON.stringify({ name, type, position }),
+    })
   }
 }
 

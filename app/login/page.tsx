@@ -24,7 +24,7 @@ export default function LoginPage() {
     try {
       await login(username, password)
     } catch (err) {
-      setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.")
+      setError(err instanceof Error ? err.message : "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.")
     } finally {
       setIsLoading(false)
     }

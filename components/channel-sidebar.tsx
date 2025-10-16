@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/auth-context"
 import type { Clan, Category, Channel } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+import { CreateChannelDialog } from "@/components/create-channel-dialog"
 
 interface ChannelSidebarProps {
   clan?: Clan
@@ -86,13 +87,20 @@ export function ChannelSidebar({
                       {category.name}
                     </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-4 w-4 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
-                  >
-                    <Plus className="h-4 w-4 text-[#80848e]" />
-                  </Button>
+                  <CreateChannelDialog
+                    clanId={clan.id}
+                    categoryId={category.id}
+                    onChannelCreated={() => window.location.reload()}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
+                      >
+                        <Plus className="h-4 w-4 text-[#80848e]" />
+                      </Button>
+                    }
+                  />
                 </div>
 
                 {/* Channels in Category */}

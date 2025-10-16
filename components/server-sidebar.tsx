@@ -1,11 +1,10 @@
 "use client"
-
-import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { Clan } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { CreateClanDialog } from "@/components/create-clan-dialog"
 
 interface ServerSidebarProps {
   clans: Clan[]
@@ -75,13 +74,7 @@ export function ServerSidebar({ clans, selectedClanId, onSelectClan }: ServerSid
         {/* Add Server Button */}
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-12 w-12 rounded-[24px] bg-[#313338] text-[#23a559] transition-all hover:rounded-[16px] hover:bg-[#23a559] hover:text-white"
-            >
-              <Plus className="h-6 w-6" />
-            </Button>
+            <CreateClanDialog onClanCreated={() => window.location.reload()} />
           </TooltipTrigger>
           <TooltipContent side="right">
             <p>Add a Server</p>
