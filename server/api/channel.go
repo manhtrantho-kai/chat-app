@@ -23,3 +23,27 @@ func (api *Api) GetChannelByID(c *fiber.Ctx) error {
 	}
 	return c.JSON(channel)
 }
+
+func (api *Api) CreateChannel(c *fiber.Ctx) error {
+	categoryID := c.Params("category_id")
+	clanID := c.Params("clanId")
+	var req struct {
+		Name     string `json:"name"`
+		Position int    `json:"position"`
+		Type     string `json:"type"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	channel := models.Channel{
+		Name:       req.Name,
+		Position:   req.Position,
+		CategoryID: categoryID,
+		ClanID:     clanID,
+		Type:       req.Type,
+	}
+	if err := api.Db.Create(&channel).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not create channel"})
+	}
+	return c.JSON(channel)
+}

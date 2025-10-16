@@ -14,3 +14,23 @@ func (api *Api) GetCategoriesByClan(c *fiber.Ctx) error {
 	}
 	return c.JSON(categories)
 }
+
+func (api *Api) CreateCategory(c *fiber.Ctx) error {
+	clanId := c.Params("clanId")
+	var req struct {
+		Name     string `json:"name"`
+		Position int    `json:"position"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	category := models.Category{
+		Name:     req.Name,
+		Position: req.Position,
+		ClanID:   clanId,
+	}
+	if err := api.Db.Create(&category).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not create category"})
+	}
+	return c.JSON(category)
+}
