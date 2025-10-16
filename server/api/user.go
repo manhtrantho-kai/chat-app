@@ -34,11 +34,12 @@ func HashPassword(password string) (string, error) {
 func (api *Api) UpdateUser(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(string)
 	var req struct {
-		Username string `json:"username"`
-		Avatar   string `json:"avatar"`
-		Status   string `json:"status"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Username    string `json:"username"`
+		Avatar      string `json:"avatar"`
+		Status      string `json:"status"`
+		Email       string `json:"email"`
+		OldPassword string `json:"old_password"`
+		Password    string `json:"password"`
 	}
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
@@ -62,6 +63,9 @@ func (api *Api) UpdateUser(c *fiber.Ctx) error {
 		user.Email = req.Email
 	}
 	if req.Password != "" {
+		if !CheckPassword(req.OldPassword, user.PasswordHash) {
+			return c.Status(400).JSON(fiber.Map{"error": "Old password is incorrect"})
+		}
 		hashedPassword, err := HashPassword(req.Password)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": "Failed to hash password"})
