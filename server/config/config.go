@@ -8,9 +8,13 @@ import (
 )
 
 type Config struct {
-	DatabaseURL string
-	ApiKey	  string
-	JWTSecret   string
+	DatabaseURL      string
+	ApiKey           string
+	JWTSecret        string
+	GithubRepoOwner  string
+	GithubRepoName   string
+	GithubRepoBranch string
+	GithubToken      string
 }
 
 func LoadConfig() *Config {
@@ -20,8 +24,12 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		DatabaseURL: os.Getenv("DATABASE_URL"),
-		ApiKey: os.Getenv("API_KEY"),
-		JWTSecret:   os.Getenv("JWT_SECRET"),
+		DatabaseURL:      os.Getenv("DATABASE_URL"),
+		ApiKey:           os.Getenv("API_KEY"),
+		JWTSecret:        os.Getenv("JWT_SECRET"),
+		GithubRepoOwner:  os.Getenv("GITHUB_REPO_OWNER"),
+		GithubRepoName:   os.Getenv("GITHUB_REPO_NAME"),
+		GithubRepoBranch: os.Getenv("GITHUB_REPO_BRANCH"),
+		GithubToken:      os.Getenv("GITHUB_TOKEN"),
 	}
 }

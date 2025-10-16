@@ -1,6 +1,6 @@
 module server
 
-go 1.21
+go 1.24.0
 
 toolchain go1.24.4
 
@@ -8,8 +8,10 @@ require (
 	github.com/gofiber/fiber/v2 v2.46.0
 	github.com/gofiber/websocket/v2 v2.2.1
 	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/google/go-github/v62 v62.0.0
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.7.0
+	golang.org/x/oauth2 v0.32.0
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.0
 )
@@ -17,6 +19,7 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/fasthttp/websocket v1.5.3 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
