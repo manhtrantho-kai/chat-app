@@ -33,6 +33,9 @@ func SetupRoutes(api *api.Api) {
 	// Stickers
 	protected.Get("/stickers", api.GetStickers)
 
+	// User
+	protected.Post("/user/update", api.UpdateUser)
+
 	// Files
 	apiGroup.Post("/upload", api.UploadFile)
 
