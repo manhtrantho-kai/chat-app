@@ -1,6 +1,12 @@
 // API configuration for Go backend
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
+interface UploadResponse {
+  // Define the structure of UploadResponse here
+  url: string
+  filename: string
+}
+
 export class ApiClient {
   private baseUrl: string
 
@@ -114,19 +120,20 @@ export class ApiClient {
   }
 
   // User endpoints
-  async updateUser(userId: string, data: any) {
-    return this.request(`/users/${userId}`, {
-      method: "PATCH",
+  async updateUser(data: any) {
+    return this.request("/user/update", {
+      method: "POST",
       body: JSON.stringify(data),
     })
   }
 
-  async uploadAvatar(file: File) {
+  // Image upload endpoint
+  async uploadImage(file: File): Promise<UploadResponse> {
     const formData = new FormData()
-    formData.append("avatar", file)
+    formData.append("file", file)
 
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
-    const response = await fetch(`${this.baseUrl}/users/avatar`, {
+    const response = await fetch(`${this.baseUrl}/upload`, {
       method: "POST",
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),

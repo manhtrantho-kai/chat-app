@@ -52,10 +52,10 @@ export default function SettingsPage() {
     try {
       let avatarUrl = user?.avatar
 
-      // Upload avatar if changed
       if (avatarFile) {
-        const uploadResponse = await apiClient.uploadAvatar(avatarFile)
-        avatarUrl = uploadResponse.url
+        const uploadResponse = await apiClient.uploadImage(avatarFile)
+        // Take only the first URL from the response
+        avatarUrl = uploadResponse.urls[0]
       }
 
       // Prepare update data
@@ -73,7 +73,6 @@ export default function SettingsPage() {
         updateData.avatar = avatarUrl
       }
 
-      // Handle password change
       if (formData.newPassword) {
         if (formData.newPassword !== formData.confirmPassword) {
           throw new Error("New passwords do not match")
@@ -81,11 +80,10 @@ export default function SettingsPage() {
         if (!formData.currentPassword) {
           throw new Error("Current password is required to change password")
         }
-        updateData.currentPassword = formData.currentPassword
-        updateData.newPassword = formData.newPassword
+        updateData.old_password = formData.currentPassword
+        updateData.password = formData.newPassword
       }
 
-      // Update user profile
       if (Object.keys(updateData).length > 0) {
         await updateUser(updateData)
         setSuccess("Profile updated successfully!")

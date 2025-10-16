@@ -74,6 +74,10 @@ export interface UpdateUserRequest {
   username?: string
   email?: string
   avatar?: string
-  currentPassword?: string
-  newPassword?: string
+  old_password?: string
+  password?: string
+}
+
+export interface UploadResponse {
+  urls: string[]
 }
