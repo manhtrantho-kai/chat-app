@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const response = await apiClient.login(username, password)
     localStorage.setItem("token", response.token)
+    console.log("token", response.token)
     setUser(response.user)
     router.push("/chat")
   }
@@ -86,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUser = async (data: any) => {
     if (!user) throw new Error("No user logged in")
 
-    const updatedUser = await apiClient.updateUser(user.id, data)
+    const updatedUser = await apiClient.updateUser(data)
     setUser(updatedUser as User)
   }
 

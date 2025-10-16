@@ -40,7 +40,7 @@ func SetupRoutes(api *api.Api) {
 	protected.Post("/user/update", api.UpdateUser)
 
 	// Files
-	apiGroup.Post("/upload", api.UploadFile)
+	app.Post("/upload", api.UploadFile)
 
 	// WebSocket
 	app.Get("/ws", api.WebSocketHandler)
