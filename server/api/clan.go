@@ -22,3 +22,23 @@ func (api *Api) GetClanByID(c *fiber.Ctx) error {
 	}
 	return c.JSON(clan)
 }
+
+func (api *Api) CreateClan(c *fiber.Ctx) error {
+	userID := c.Locals("userID").(string)
+	var req struct {
+		Name   string `json:"name"`
+		Avatar string `json:"avatar"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	clan := models.Clan{
+		Name:    req.Name,
+		Icon:    req.Avatar,
+		OwnerID: userID,
+	}
+	if err := api.Db.Create(&clan).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not create clan"})
+	}
+	return c.JSON(clan)
+}
