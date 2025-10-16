@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"server/models"
 	"time"
 
@@ -23,14 +24,18 @@ func (api *Api) Register(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "Hash error"})
 	}
 	user := models.User{
-		ID:           req.Username,
+		ID:           generateID(),
 		Username:     req.Username,
 		PasswordHash: string(hash),
 	}
 	if err := api.Db.Create(&user).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "User exists"})
 	}
-	token, _ := createToken(user.ID, api.Config.JWTSecret)
+	token, err := createToken(user.ID, api.Config.JWTSecret)
+	if err != nil {
+		_ = api.Db.Delete(&user)
+		return c.Status(500).JSON(fiber.Map{"error": "Token creation error"})
+	}
 	return c.JSON(fiber.Map{
 		"token": token,
 		"user":  user,
@@ -53,7 +58,10 @@ func (api *Api) Login(c *fiber.Ctx) error {
 	if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)) != nil {
 		return c.Status(401).JSON(fiber.Map{"error": "Wrong password"})
 	}
-	token, _ := createToken(user.ID, api.Config.JWTSecret)
+	token, err := createToken(user.ID, api.Config.JWTSecret)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Token creation error"})
+	}
 	return c.JSON(fiber.Map{
 		"token": token,
 		"user":  user,
@@ -99,4 +107,8 @@ func (api *Api) GetCurrentUser(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.JSON(user)
+}
+
+func generateID() string {
+	return fmt.Sprintf("user-%d", time.Now().UnixNano())
 }
