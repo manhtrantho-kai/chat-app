@@ -109,7 +109,16 @@ export class ApiClient {
     const data = await response.json()
 
     if (!response.ok || data.error) {
-      throw new Error(data.error || "Login failed")
+      // Map backend error messages to user-friendly Vietnamese messages
+      const errorMessages: Record<string, string> = {
+        "Invalid request": "Yêu cầu không hợp lệ",
+        "User not found": "Không tìm thấy người dùng",
+        "Wrong password": "Mật khẩu không đúng",
+        "Token creation error": "Lỗi tạo phiên đăng nhập. Vui lòng thử lại.",
+      }
+
+      const errorMessage = errorMessages[data.error] || data.error || "Đăng nhập thất bại"
+      throw new Error(errorMessage)
     }
 
     return data
@@ -127,7 +136,16 @@ export class ApiClient {
     const data = await response.json()
 
     if (!response.ok || data.error) {
-      throw new Error(data.error || "Registration failed")
+      // Map backend error messages to user-friendly Vietnamese messages
+      const errorMessages: Record<string, string> = {
+        "Invalid request": "Yêu cầu không hợp lệ",
+        "Hash error": "Lỗi mã hóa mật khẩu. Vui lòng thử lại.",
+        "User exists": "Tên đăng nhập đã tồn tại",
+        "Token creation error": "Lỗi tạo phiên đăng nhập. Vui lòng thử lại.",
+      }
+
+      const errorMessage = errorMessages[data.error] || data.error || "Đăng ký thất bại"
+      throw new Error(errorMessage)
     }
 
     return data
