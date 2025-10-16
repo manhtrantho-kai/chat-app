@@ -77,7 +77,7 @@ func (api *Api) AuthMiddleware(c *fiber.Ctx) error {
 	tokenStr := auth[7:]
 	claims := jwt.MapClaims{}
 	_, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return api.Config.JWTSecret, nil
+		return []byte(api.Config.JWTSecret), nil
 	})
 	if err != nil {
 		return c.Status(401).JSON(fiber.Map{"error": "Invalid token"})
@@ -93,7 +93,7 @@ func createToken(userId, jwtSecret string) (string, error) {
 		"exp":    time.Now().Add(time.Hour * 72).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString([]byte(jwtSecret))
 }
 
 // Lấy thông tin user hiện tại
