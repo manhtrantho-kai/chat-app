@@ -2,9 +2,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
 interface UploadResponse {
-  // Define the structure of UploadResponse here
-  url: string
-  filename: string
+  urls: string[]
 }
 
 export class ApiClient {
@@ -170,7 +168,7 @@ export class ApiClient {
   // Image upload endpoint
   async uploadImage(file: File): Promise<UploadResponse> {
     const formData = new FormData()
-    formData.append("file", file)
+    formData.append("files", file) // Backend expects "files" field name
 
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
     const response = await fetch(`${this.baseUrl}/upload`, {
