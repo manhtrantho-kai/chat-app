@@ -19,6 +19,7 @@ func SetupRoutes(api *api.Api) {
 	protected.Get("/clans", api.GetClans)
 	protected.Get("/clans/:id", api.GetClanByID)
 	protected.Post("/clans", api.CreateClan)
+	protected.Delete("/clans/:id", api.DeleteClan)
 
 	// Categories
 	protected.Get("/clans/:clanId/categories", api.GetCategoriesByClan)

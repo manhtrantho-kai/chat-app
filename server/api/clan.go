@@ -43,3 +43,11 @@ func (api *Api) CreateClan(c *fiber.Ctx) error {
 	}
 	return c.JSON(clan)
 }
+
+func (api *Api) DeleteClan(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := api.Db.Delete(&models.Clan{}, "id = ?", id).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not delete clan"})
+	}
+	return c.SendStatus(204)
+}
