@@ -36,7 +36,14 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
             {showTimestamp ? (
               <div className="flex gap-4 hover:bg-[#2e3035]">
                 <Avatar className="h-10 w-10 flex-shrink-0">
-                  <AvatarImage src={message.author.avatar || "/placeholder.svg"} alt={message.author.username} />
+                  <AvatarImage
+                    src={encodeURI(message.author.avatar || "/placeholder.svg")}
+                    alt={message.author.username}
+                    onError={(e) => {
+                      console.log("[v0] Message avatar failed to load:", message.author.avatar)
+                      e.currentTarget.src = "/placeholder.svg"
+                    }}
+                  />
                   <AvatarFallback className="bg-[#5865f2] text-white">
                     {message.author.username.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -58,9 +65,13 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                         <div key={attachment.id} className="overflow-hidden rounded-md">
                           {attachment.contentType.startsWith("image/") ? (
                             <img
-                              src={attachment.url || "/placeholder.svg"}
+                              src={encodeURI(attachment.url || "/placeholder.svg")}
                               alt={attachment.filename}
                               className="max-h-[300px] max-w-[400px] rounded-md object-cover"
+                              onError={(e) => {
+                                console.log("[v0] Attachment image failed to load:", attachment.url)
+                                e.currentTarget.src = "/placeholder.svg"
+                              }}
                             />
                           ) : (
                             <div className="flex items-center gap-2 rounded bg-[#2b2d31] p-3">
@@ -74,9 +85,13 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                   {message.sticker && (
                     <div className="mt-2">
                       <img
-                        src={message.sticker.url || "/placeholder.svg"}
+                        src={encodeURI(message.sticker.url || "/placeholder.svg")}
                         alt={message.sticker.name}
                         className="h-40 w-40"
+                        onError={(e) => {
+                          console.log("[v0] Sticker image failed to load:", message.sticker?.url)
+                          e.currentTarget.src = "/placeholder.svg"
+                        }}
                       />
                     </div>
                   )}
@@ -92,9 +107,13 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                         <div key={attachment.id} className="overflow-hidden rounded-md">
                           {attachment.contentType.startsWith("image/") ? (
                             <img
-                              src={attachment.url || "/placeholder.svg"}
+                              src={encodeURI(attachment.url || "/placeholder.svg")}
                               alt={attachment.filename}
                               className="max-h-[300px] max-w-[400px] rounded-md object-cover"
+                              onError={(e) => {
+                                console.log("[v0] Attachment image failed to load:", attachment.url)
+                                e.currentTarget.src = "/placeholder.svg"
+                              }}
                             />
                           ) : (
                             <div className="flex items-center gap-2 rounded bg-[#2b2d31] p-3">
@@ -108,9 +127,13 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
                   {message.sticker && (
                     <div className="mt-2">
                       <img
-                        src={message.sticker.url || "/placeholder.svg"}
+                        src={encodeURI(message.sticker.url || "/placeholder.svg")}
                         alt={message.sticker.name}
                         className="h-40 w-40"
+                        onError={(e) => {
+                          console.log("[v0] Sticker image failed to load:", message.sticker?.url)
+                          e.currentTarget.src = "/placeholder.svg"
+                        }}
                       />
                     </div>
                   )}

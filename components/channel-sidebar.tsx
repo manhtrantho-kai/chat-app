@@ -203,10 +203,26 @@ export function ChannelSidebar({
         <div className="flex flex-1 items-center gap-2 overflow-hidden">
           <div className="relative">
             {user?.avatar ? (
-              <img src={user.avatar || "/placeholder.svg"} alt={user.username} className="h-8 w-8 rounded-full" />
-            ) : (
-              <div className="h-8 w-8 rounded-full bg-[#5865f2]" />
-            )}
+              <img
+                src={encodeURI(user.avatar) || "/placeholder.svg"}
+                alt={user.username}
+                className="h-8 w-8 rounded-full object-cover"
+                onError={(e) => {
+                  console.log("[v0] Avatar failed to load:", user.avatar)
+                  // Fallback to colored div with initial
+                  e.currentTarget.style.display = "none"
+                  e.currentTarget.nextElementSibling?.classList.remove("hidden")
+                }}
+              />
+            ) : null}
+            <div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-full bg-[#5865f2] text-sm font-semibold text-white",
+                user?.avatar && "hidden",
+              )}
+            >
+              {user?.username?.[0]?.toUpperCase() || "U"}
+            </div>
             <div
               className={cn(
                 "absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#232428]",
