@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Trash2, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -40,6 +40,11 @@ export function ClanInfoDialog({ clan, open, onOpenChange, onClanDeleted }: Clan
 
   const isOwner = user?.id === clan.ownerId
 
+  useEffect(() => {
+    console.log("[v0] ClanInfoDialog render:", { open, clanName: clan.name, clanId: clan.id, userId: user?.id })
+  }, [open, clan, user])
+  // </CHANGE>
+
   const handleDelete = async () => {
     setError("")
     setIsDeleting(true)
@@ -59,7 +64,7 @@ export function ClanInfoDialog({ clan, open, onOpenChange, onClanDeleted }: Clan
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="border-none bg-[#313338] text-white">
+        <DialogContent className="border-none bg-[#313338] text-white sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Thông tin Server</DialogTitle>
             <DialogDescription className="text-[#b5bac1]">Chi tiết về server {clan.name}</DialogDescription>
