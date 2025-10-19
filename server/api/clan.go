@@ -24,7 +24,7 @@ func (api *Api) GetClanByID(c *fiber.Ctx) error {
 }
 
 func (api *Api) CreateClan(c *fiber.Ctx) error {
-	userID := c.Locals("userId").(string)
+	userID := c.Locals("userID").(string)
 	var req struct {
 		Name   string `json:"name"`
 		Avatar string `json:"avatar"`

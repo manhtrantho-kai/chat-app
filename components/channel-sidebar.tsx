@@ -15,6 +15,7 @@ import type { Clan, Category, Channel } from "@/lib/types"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { CreateChannelDialog } from "@/components/create-channel-dialog"
+import { CreateCategoryDialog } from "@/components/create-category-dialog"
 
 interface ChannelSidebarProps {
   clan?: Clan
@@ -74,6 +75,11 @@ export function ChannelSidebar({
       {/* Channels List */}
       <ScrollArea className="flex-1">
         <div className="px-2 py-3">
+          <div className="mb-2 flex items-center justify-between px-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[#80848e]">Categories</span>
+            <CreateCategoryDialog clanId={clan.id} onCategoryCreated={() => window.location.reload()} />
+          </div>
+
           {categories.length === 0 ? (
             <div className="px-2 py-4 text-center">
               <p className="text-sm text-[#80848e]">Chưa có category nào</p>

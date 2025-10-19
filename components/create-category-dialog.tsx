@@ -21,9 +21,10 @@ import { apiClient } from "@/lib/api"
 interface CreateCategoryDialogProps {
   clanId: string
   onCategoryCreated?: () => void
+  trigger?: React.ReactNode
 }
 
-export function CreateCategoryDialog({ clanId, onCategoryCreated }: CreateCategoryDialogProps) {
+export function CreateCategoryDialog({ clanId, onCategoryCreated, trigger }: CreateCategoryDialogProps) {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -50,13 +51,11 @@ export function CreateCategoryDialog({ clanId, onCategoryCreated }: CreateCatego
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-4 w-4 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
-        >
-          <Plus className="h-4 w-4 text-[#80848e]" />
-        </Button>
+        {trigger || (
+          <Button variant="ghost" size="icon" className="h-4 w-4 text-[#80848e] hover:text-[#dbdee1]">
+            <Plus className="h-4 w-4" />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="bg-[#313338] text-white border-none">
         <DialogHeader>
