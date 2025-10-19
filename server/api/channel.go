@@ -49,3 +49,11 @@ func (api *Api) CreateChannel(c *fiber.Ctx) error {
 	fmt.Println("Created channel:", channel, " in categoryID:", categoryID)
 	return c.JSON(channel)
 }
+
+func (api *Api) DeleteChannel(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := api.Db.Delete(&models.Channel{}, "id = ?", id).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not delete channel"})
+	}
+	return c.JSON(fiber.Map{"message": "Channel deleted successfully"})
+}

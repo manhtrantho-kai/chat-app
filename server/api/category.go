@@ -35,3 +35,11 @@ func (api *Api) CreateCategory(c *fiber.Ctx) error {
 	}
 	return c.JSON(category)
 }
+
+func (api *Api) DeleteCategory(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if err := api.Db.Delete(&models.Category{}, "id = ?", id).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not delete category"})
+	}
+	return c.JSON(fiber.Map{"message": "Category deleted successfully"})
+}

@@ -24,11 +24,13 @@ func SetupRoutes(api *api.Api) {
 	// Categories
 	protected.Get("/clans/:clanId/categories", api.GetCategoriesByClan)
 	protected.Post("/clans/:clanId/categories", api.CreateCategory)
+	protected.Delete("/categories/:id", api.DeleteCategory)
 
 	// Channels
 	protected.Get("/category/:categoryId/channels", api.GetChannelsByClan)
 	protected.Get("/channels/:id", api.GetChannelByID)
 	protected.Post("/category/:categoryId/channels", api.CreateChannel)
+	protected.Delete("/channels/:id", api.DeleteChannel)
 
 	// Messages
 	protected.Get("/channels/:channelId/messages", api.GetMessages)

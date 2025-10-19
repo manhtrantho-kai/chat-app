@@ -49,5 +49,5 @@ func (api *Api) DeleteClan(c *fiber.Ctx) error {
 	if err := api.Db.Delete(&models.Clan{}, "id = ?", id).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Could not delete clan"})
 	}
-	return c.SendStatus(204)
+	return c.JSON(fiber.Map{"message": "Clan deleted successfully"})
 }
