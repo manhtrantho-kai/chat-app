@@ -1,15 +1,8 @@
 "use client"
 
-import { ChevronDown, Hash, Volume2, Settings, UserPlus, Plus, LogOut, MoreVertical } from "lucide-react"
+import { ChevronDown, Hash, Volume2, Settings, Plus, LogOut, MoreVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/auth-context"
 import type { Clan, Category, Channel } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -64,40 +57,20 @@ export function ChannelSidebar({
         </>
       ) : (
         <>
-          {/* Server Header */}
-          <DropdownMenu onOpenChange={(open) => console.log("[v0] Dropdown menu open state:", open)}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-12 w-full justify-between rounded-none px-4 text-base font-semibold text-white hover:bg-[#35373c]"
-                onClick={() => console.log("[v0] Server name button clicked")}
-              >
-                <span className="truncate">{clan.name}</span>
-                <ChevronDown className="h-5 w-5 flex-shrink-0" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-[#111214] text-[#b5bac1]">
-              <DropdownMenuItem className="text-[#949ba4] hover:bg-[#5865f2] hover:text-white focus:bg-[#5865f2] focus:text-white">
-                <UserPlus className="mr-2 h-4 w-4" />
-                Invite People
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-[#949ba4] hover:bg-[#5865f2] hover:text-white focus:bg-[#5865f2] focus:text-white"
-                onSelect={(e) => {
-                  e.preventDefault()
-                  console.log("[v0] Server Settings clicked, setting showClanInfo to true")
-                  setShowClanInfo(true)
-                }}
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Server Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-[#3f4147]" />
-              <DropdownMenuItem className="text-[#f23f42] hover:bg-[#f23f42] hover:text-white focus:bg-[#f23f42] focus:text-white">
-                Leave Server
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex h-12 items-center justify-between px-4 shadow-md">
+            <span className="truncate text-base font-semibold text-white">{clan.name}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-[#b5bac1] hover:bg-[#35373c] hover:text-white"
+              onClick={() => {
+                console.log("[v0] Settings button clicked, opening clan info")
+                setShowClanInfo(true)
+              }}
+            >
+              <Settings className="h-5 w-5" />
+            </Button>
+          </div>
 
           {/* Channels List */}
           <ScrollArea className="flex-1">
