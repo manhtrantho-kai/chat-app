@@ -13,6 +13,8 @@ interface ServerSidebarProps {
 }
 
 export function ServerSidebar({ clans, selectedClanId, onSelectClan }: ServerSidebarProps) {
+  console.log("[v0] ServerSidebar render:", { clansCount: clans.length, selectedClanId })
+
   return (
     <div className="flex w-[72px] flex-col items-center gap-2 bg-[#1e1f22] py-3">
       <TooltipProvider delayDuration={0}>
@@ -41,6 +43,7 @@ export function ServerSidebar({ clans, selectedClanId, onSelectClan }: ServerSid
         {/* Separator */}
         <div className="h-[2px] w-8 rounded-full bg-[#35363c]" />
 
+        {/* Empty State Message */}
         {clans.length === 0 && (
           <div className="flex flex-col items-center gap-2 px-2 py-4">
             <p className="text-center text-xs text-[#b5bac1]">Chưa có server nào</p>

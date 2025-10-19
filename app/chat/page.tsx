@@ -20,6 +20,10 @@ export default function ChatPage() {
   const [channels, setChannels] = useState<Channel[]>([])
   const [loading, setLoading] = useState(true)
 
+  const selectedClan = clans.find((c) => c.id === selectedClanId)
+  const clanCategories = categories.filter((c) => c.clanId === selectedClanId)
+  const clanChannels = channels.filter((c) => c.clanId === selectedClanId)
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login")
@@ -31,11 +35,10 @@ export default function ChatPage() {
       const fetchClans = async () => {
         try {
           const data = await apiClient.getClans()
+          console.log("[v0] Fetched clans:", data)
           setClans(data)
           if (data.length > 0) {
             setSelectedClanId(data[0].id)
-          } else {
-            setLoading(false)
           }
         } catch (error) {
           console.error("Failed to fetch clans:", error)
@@ -60,7 +63,12 @@ export default function ChatPage() {
       const fetchCategories = async () => {
         try {
           const data = await apiClient.getCategories(selectedClanId)
+          console.log("[v0] Fetched categories:", data)
           setCategories(data)
+          if (data.length === 0) {
+            setChannels([])
+            setLoading(false)
+          }
         } catch (error) {
           console.error("Failed to fetch categories:", error)
           const mockCategories = [
@@ -89,7 +97,7 @@ export default function ChatPage() {
                 {
                   id: "1",
                   name: "general",
-                  type: "text",
+                  type: "text" as const,
                   categoryId: category.id,
                   clanId: selectedClanId || "1",
                   position: 0,
@@ -97,7 +105,7 @@ export default function ChatPage() {
                 {
                   id: "2",
                   name: "random",
-                  type: "text",
+                  type: "text" as const,
                   categoryId: category.id,
                   clanId: selectedClanId || "1",
                   position: 1,
@@ -117,20 +125,12 @@ export default function ChatPage() {
         }
       }
       fetchAllChannels()
+    } else if (selectedClanId && categories.length === 0) {
+      setLoading(false)
     }
   }, [categories, selectedChannelId, selectedClanId])
 
-  if (isLoading || loading || !user) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-[#313338]">
-        <div className="text-white">Đang tải...</div>
-      </div>
-    )
-  }
-
-  const selectedClan = clans.find((c) => c.id === selectedClanId)
-  const clanCategories = categories.filter((c) => c.clanId === selectedClanId)
-  const clanChannels = channels.filter((c) => c.clanId === selectedClanId)
+  console.log("[v0] Render state:", { clans: clans.length, selectedClanId, selectedClan: !!selectedClan, loading })
 
   return (
     <div className="flex h-screen overflow-hidden dark">
