@@ -16,6 +16,8 @@ export class ApiClient {
     const url = `${this.baseUrl}${endpoint}`
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
+    console.log("[v0] API Request:", { url, hasToken: !!token })
+
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -26,7 +28,9 @@ export class ApiClient {
     })
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`)
+      const errorText = await response.text()
+      console.error("[v0] API Error Response:", { status: response.status, body: errorText })
+      throw new Error(`API Error: ${response.status} ${response.statusText}`)
     }
 
     return response.json()
@@ -47,8 +51,8 @@ export class ApiClient {
   }
 
   // Channel endpoints
-  async getChannels(clanId: string) {
-    return this.request(`/clans/${clanId}/channels`)
+  async getChannels(categoryId: string) {
+    return this.request(`/category/${categoryId}/channels`)
   }
 
   async getChannel(channelId: string) {
@@ -203,8 +207,8 @@ export class ApiClient {
   }
 
   // Channel management endpoints
-  async createChannel(clanId: string, name: string, type: string, position: number) {
-    return this.request(`/clans/${clanId}/channels`, {
+  async createChannel(categoryId: string, name: string, type: string, position: number) {
+    return this.request(`/category/${categoryId}/channels`, {
       method: "POST",
       body: JSON.stringify({ name, type, position }),
     })

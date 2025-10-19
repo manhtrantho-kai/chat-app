@@ -6,13 +6,19 @@ import { useAuth } from "@/contexts/auth-context"
 import { ServerSidebar } from "@/components/server-sidebar"
 import { ChannelSidebar } from "@/components/channel-sidebar"
 import { ChatArea } from "@/components/chat-area"
-import { mockClans, mockCategories, mockChannels } from "@/lib/mock-data"
+import { apiClient } from "@/lib/api"
+import type { Clan, Category, Channel } from "@/lib/types"
 
 export default function ChatPage() {
   const router = useRouter()
   const { user, isLoading } = useAuth()
-  const [selectedClanId, setSelectedClanId] = useState("1")
-  const [selectedChannelId, setSelectedChannelId] = useState("1")
+  const [selectedClanId, setSelectedClanId] = useState<string | null>(null)
+  const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null)
+
+  const [clans, setClans] = useState<Clan[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [channels, setChannels] = useState<Channel[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -20,7 +26,100 @@ export default function ChatPage() {
     }
   }, [user, isLoading, router])
 
-  if (isLoading || !user) {
+  useEffect(() => {
+    if (user && !isLoading) {
+      const fetchClans = async () => {
+        try {
+          const data = await apiClient.getClans()
+          setClans(data)
+          if (data.length > 0) {
+            setSelectedClanId(data[0].id)
+          }
+        } catch (error) {
+          console.error("Failed to fetch clans:", error)
+          console.log("[v0] API URL:", process.env.NEXT_PUBLIC_API_URL)
+          console.log("[v0] Token:", localStorage.getItem("token"))
+
+          // Fallback to mock data if API fails
+          const mockClans = [
+            { id: "1", name: "General", icon: "/abstract-gaming-logo.png", ownerId: user.id },
+            { id: "2", name: "Development", icon: "/code-logo.png", ownerId: user.id },
+            { id: "3", name: "Music", icon: "/abstract-music-logo.png", ownerId: user.id },
+          ]
+          setClans(mockClans)
+          setSelectedClanId(mockClans[0].id)
+        }
+      }
+      fetchClans()
+    }
+  }, [user, isLoading])
+
+  useEffect(() => {
+    if (selectedClanId) {
+      const fetchCategories = async () => {
+        try {
+          const data = await apiClient.getCategories(selectedClanId)
+          setCategories(data)
+        } catch (error) {
+          console.error("Failed to fetch categories:", error)
+          const mockCategories = [
+            { id: "1", name: "TEXT CHANNELS", clanId: selectedClanId, position: 0 },
+            { id: "2", name: "VOICE CHANNELS", clanId: selectedClanId, position: 1 },
+          ]
+          setCategories(mockCategories)
+        }
+      }
+      fetchCategories()
+    }
+  }, [selectedClanId])
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      const fetchAllChannels = async () => {
+        try {
+          const allChannels: Channel[] = []
+          for (const category of categories) {
+            try {
+              const data = await apiClient.getChannels(category.id)
+              allChannels.push(...data)
+            } catch (error) {
+              console.error(`Failed to fetch channels for category ${category.id}:`, error)
+              const mockChannels = [
+                {
+                  id: "1",
+                  name: "general",
+                  type: "text",
+                  categoryId: category.id,
+                  clanId: selectedClanId || "1",
+                  position: 0,
+                },
+                {
+                  id: "2",
+                  name: "random",
+                  type: "text",
+                  categoryId: category.id,
+                  clanId: selectedClanId || "1",
+                  position: 1,
+                },
+              ]
+              allChannels.push(...mockChannels)
+            }
+          }
+          setChannels(allChannels)
+          if (allChannels.length > 0 && !selectedChannelId) {
+            setSelectedChannelId(allChannels[0].id)
+          }
+          setLoading(false)
+        } catch (error) {
+          console.error("Failed to fetch channels:", error)
+          setLoading(false)
+        }
+      }
+      fetchAllChannels()
+    }
+  }, [categories, selectedChannelId, selectedClanId])
+
+  if (isLoading || loading || !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#313338]">
         <div className="text-white">Đang tải...</div>
@@ -28,22 +127,22 @@ export default function ChatPage() {
     )
   }
 
-  const selectedClan = mockClans.find((c) => c.id === selectedClanId)
-  const clanCategories = mockCategories.filter((c) => c.clanId === selectedClanId)
-  const clanChannels = mockChannels.filter((c) => c.clanId === selectedClanId)
+  const selectedClan = clans.find((c) => c.id === selectedClanId)
+  const clanCategories = categories.filter((c) => c.clanId === selectedClanId)
+  const clanChannels = channels.filter((c) => c.clanId === selectedClanId)
 
   return (
     <div className="flex h-screen overflow-hidden dark">
-      <ServerSidebar clans={mockClans} selectedClanId={selectedClanId} onSelectClan={setSelectedClanId} />
+      <ServerSidebar clans={clans} selectedClanId={selectedClanId || ""} onSelectClan={setSelectedClanId} />
       <ChannelSidebar
         clan={selectedClan}
         categories={clanCategories}
         channels={clanChannels}
-        selectedChannelId={selectedChannelId}
+        selectedChannelId={selectedChannelId || ""}
         onSelectChannel={setSelectedChannelId}
       />
       <ChatArea
-        channelId={selectedChannelId}
+        channelId={selectedChannelId || ""}
         channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
       />
     </div>
