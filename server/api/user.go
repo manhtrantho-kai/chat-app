@@ -32,7 +32,7 @@ func HashPassword(password string) (string, error) {
 }
 
 func (api *Api) UpdateUser(c *fiber.Ctx) error {
-	userID := c.Locals("userID").(string)
+	userID := c.Locals("userId").(string)
 	var req struct {
 		Username    string `json:"username"`
 		Avatar      string `json:"avatar"`
