@@ -24,7 +24,7 @@ func (api *Api) Register(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "Hash error"})
 	}
 	user := models.User{
-		ID:           generateID(),
+		ID:           generateID("user"),
 		Username:     req.Username,
 		PasswordHash: string(hash),
 	}
@@ -109,6 +109,6 @@ func (api *Api) GetCurrentUser(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-func generateID() string {
-	return fmt.Sprintf("user-%d", time.Now().UnixNano())
+func generateID(obj string) string {
+	return fmt.Sprintf("%s-%d", obj, time.Now().UnixNano())
 }

@@ -36,7 +36,7 @@ func (api *Api) CreateChannel(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 	}
 	channel := models.Channel{
-		ID:         generateID(),
+		ID:         generateID("channel"),
 		Name:       req.Name,
 		Position:   req.Position,
 		CategoryID: categoryID,
