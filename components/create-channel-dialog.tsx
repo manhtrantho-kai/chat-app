@@ -39,7 +39,7 @@ export function CreateChannelDialog({ clanId, categoryId, trigger, onChannelCrea
     setIsLoading(true)
 
     try {
-      await apiClient.createChannel(clanId, name, type, 0)
+      await apiClient.createChannel(categoryId, name, type, 0)
 
       setOpen(false)
       setName("")
