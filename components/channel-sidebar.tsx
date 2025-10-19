@@ -83,7 +83,8 @@ export function ChannelSidebar({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-[#949ba4] hover:bg-[#5865f2] hover:text-white focus:bg-[#5865f2] focus:text-white"
-                onClick={() => {
+                onSelect={(e) => {
+                  e.preventDefault()
                   console.log("[v0] Server Settings clicked, setting showClanInfo to true")
                   setShowClanInfo(true)
                 }}
