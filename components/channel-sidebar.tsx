@@ -42,6 +42,13 @@ export function ChannelSidebar({
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null)
 
+  console.log("[v0] ChannelSidebar props:", {
+    clan: clan?.name,
+    categories: categories.length,
+    channels: channels.length,
+    channelsList: channels.map((ch) => ({ id: ch.id, name: ch.name, categoryId: ch.categoryId })),
+  })
+
   return (
     <div className="flex w-60 flex-col bg-[#2b2d31]">
       {!clan ? (

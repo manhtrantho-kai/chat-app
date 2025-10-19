@@ -88,10 +88,16 @@ export default function ChatPage() {
       const fetchAllChannels = async () => {
         try {
           const allChannels: Channel[] = []
+          console.log("[v0] Fetching channels for categories:", categories)
           for (const category of categories) {
             try {
               const data = await apiClient.getChannels(category.id)
-              allChannels.push(...data)
+              console.log(`[v0] Fetched channels for category ${category.id}:`, data)
+              const channelsWithClanId = data.map((ch) => ({
+                ...ch,
+                clanId: ch.clanId || selectedClanId || category.clanId,
+              }))
+              allChannels.push(...channelsWithClanId)
             } catch (error) {
               console.error(`Failed to fetch channels for category ${category.id}:`, error)
               const mockChannels = [
@@ -115,6 +121,7 @@ export default function ChatPage() {
               allChannels.push(...mockChannels)
             }
           }
+          console.log("[v0] All fetched channels:", allChannels)
           setChannels(allChannels)
           if (allChannels.length > 0 && !selectedChannelId) {
             setSelectedChannelId(allChannels[0].id)
@@ -131,7 +138,15 @@ export default function ChatPage() {
     }
   }, [categories, selectedChannelId, selectedClanId])
 
-  console.log("[v0] Render state:", { clans: clans.length, selectedClanId, selectedClan: !!selectedClan, loading })
+  console.log("[v0] Render state:", {
+    clans: clans.length,
+    selectedClanId,
+    selectedClan: !!selectedClan,
+    loading,
+    categories: categories.length,
+    channels: channels.length,
+    clanChannels: clanChannels.length,
+  })
 
   return (
     <div className="flex h-screen overflow-hidden dark">
