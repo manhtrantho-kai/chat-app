@@ -7,9 +7,9 @@ import (
 )
 
 func (api *Api) GetChannelsByClan(c *fiber.Ctx) error {
-	clanId := c.Params("clanId")
+	categoryId := c.Params("categoryId")
 	var channels []models.Channel
-	if err := api.Db.Where("clan_id = ?", clanId).Order("position asc").Find(&channels).Error; err != nil {
+	if err := api.Db.Where("category_id = ?", categoryId).Order("position asc").Find(&channels).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Could not fetch channels"})
 	}
 	return c.JSON(channels)
