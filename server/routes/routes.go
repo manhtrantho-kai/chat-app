@@ -38,6 +38,7 @@ func SetupRoutes(api *api.Api) {
 
 	// User
 	protected.Post("/user/update", api.UpdateUser)
+	protected.Get("/user/:id", api.GetUserByID)
 
 	// Files
 	protected.Post("/upload", api.UploadFile)

@@ -79,3 +79,12 @@ func (api *Api) UpdateUser(c *fiber.Ctx) error {
 
 	return c.JSON(user)
 }
+
+func (api *Api) GetUserByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var user models.User
+	if err := api.Db.First(&user, "id = ?", id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+	}
+	return c.JSON(user)
+}
