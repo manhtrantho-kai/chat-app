@@ -34,13 +34,14 @@ export default function ChatPage() {
           setClans(data)
           if (data.length > 0) {
             setSelectedClanId(data[0].id)
+          } else {
+            setLoading(false)
           }
         } catch (error) {
           console.error("Failed to fetch clans:", error)
           console.log("[v0] API URL:", process.env.NEXT_PUBLIC_API_URL)
           console.log("[v0] Token:", localStorage.getItem("token"))
 
-          // Fallback to mock data if API fails
           const mockClans = [
             { id: "1", name: "General", icon: "/abstract-gaming-logo.png", ownerId: user.id },
             { id: "2", name: "Development", icon: "/code-logo.png", ownerId: user.id },
@@ -134,17 +135,28 @@ export default function ChatPage() {
   return (
     <div className="flex h-screen overflow-hidden dark">
       <ServerSidebar clans={clans} selectedClanId={selectedClanId || ""} onSelectClan={setSelectedClanId} />
-      <ChannelSidebar
-        clan={selectedClan}
-        categories={clanCategories}
-        channels={clanChannels}
-        selectedChannelId={selectedChannelId || ""}
-        onSelectChannel={setSelectedChannelId}
-      />
-      <ChatArea
-        channelId={selectedChannelId || ""}
-        channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
-      />
+      {selectedClan ? (
+        <>
+          <ChannelSidebar
+            clan={selectedClan}
+            categories={clanCategories}
+            channels={clanChannels}
+            selectedChannelId={selectedChannelId || ""}
+            onSelectChannel={setSelectedChannelId}
+          />
+          <ChatArea
+            channelId={selectedChannelId || ""}
+            channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
+          />
+        </>
+      ) : (
+        <div className="flex flex-1 items-center justify-center bg-[#313338]">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Chào mừng đến với Discord!</h2>
+            <p className="text-[#b5bac1] mb-4">Tạo server đầu tiên của bạn để bắt đầu</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

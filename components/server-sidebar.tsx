@@ -41,6 +41,12 @@ export function ServerSidebar({ clans, selectedClanId, onSelectClan }: ServerSid
         {/* Separator */}
         <div className="h-[2px] w-8 rounded-full bg-[#35363c]" />
 
+        {clans.length === 0 && (
+          <div className="flex flex-col items-center gap-2 px-2 py-4">
+            <p className="text-center text-xs text-[#b5bac1]">Chưa có server nào</p>
+          </div>
+        )}
+
         {/* Server List */}
         {clans.map((clan) => (
           <Tooltip key={clan.id}>
