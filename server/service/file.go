@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"net/http"
 	"server/config"
@@ -29,12 +28,11 @@ func NewGithubUploadService(cfg *config.Config) *GithubUploadService {
 }
 
 func (s *GithubUploadService) UploadImage(ctx context.Context, fileName string, fileData []byte) (string, error) {
-	content := base64.StdEncoding.EncodeToString(fileData)
 	path := fmt.Sprintf("images/%s", fileName)
 
 	opts := &github.RepositoryContentFileOptions{
 		Message: github.String(fmt.Sprintf("Upload image %s", fileName)),
-		Content: []byte(content),
+		Content: fileData,
 		Branch:  github.String(s.cfg.GithubRepoBranch),
 	}
 
