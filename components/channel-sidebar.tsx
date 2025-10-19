@@ -49,6 +49,8 @@ export function ChannelSidebar({
     channelsList: channels.map((ch) => ({ id: ch.id, name: ch.name, categoryId: ch.categoryId })),
   })
 
+  console.log("[v0] ChannelSidebar - showClanInfo state:", showClanInfo)
+
   return (
     <div className="flex w-60 flex-col bg-[#2b2d31]">
       {!clan ? (
@@ -63,11 +65,12 @@ export function ChannelSidebar({
       ) : (
         <>
           {/* Server Header */}
-          <DropdownMenu>
+          <DropdownMenu onOpenChange={(open) => console.log("[v0] Dropdown menu open state:", open)}>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 className="h-12 w-full justify-between rounded-none px-4 text-base font-semibold text-white hover:bg-[#35373c]"
+                onClick={() => console.log("[v0] Server name button clicked")}
               >
                 <span className="truncate">{clan.name}</span>
                 <ChevronDown className="h-5 w-5 flex-shrink-0" />
@@ -80,7 +83,10 @@ export function ChannelSidebar({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-[#949ba4] hover:bg-[#5865f2] hover:text-white focus:bg-[#5865f2] focus:text-white"
-                onClick={() => setShowClanInfo(true)}
+                onClick={() => {
+                  console.log("[v0] Server Settings clicked, setting showClanInfo to true")
+                  setShowClanInfo(true)
+                }}
               >
                 <Settings className="mr-2 h-4 w-4" />
                 Server Settings
@@ -261,7 +267,10 @@ export function ChannelSidebar({
         <ClanInfoDialog
           clan={clan}
           open={showClanInfo}
-          onOpenChange={setShowClanInfo}
+          onOpenChange={(open) => {
+            console.log("[v0] ClanInfoDialog onOpenChange:", open)
+            setShowClanInfo(open)
+          }}
           onClanDeleted={() => window.location.reload()}
         />
       )}
