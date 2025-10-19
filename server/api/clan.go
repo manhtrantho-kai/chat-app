@@ -33,6 +33,7 @@ func (api *Api) CreateClan(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 	}
 	clan := models.Clan{
+		ID:      generateID(),
 		Name:    req.Name,
 		Icon:    req.Avatar,
 		OwnerID: userID,

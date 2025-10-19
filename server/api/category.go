@@ -25,6 +25,7 @@ func (api *Api) CreateCategory(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
 	}
 	category := models.Category{
+		ID:	   generateID(),
 		Name:     req.Name,
 		Position: req.Position,
 		ClanID:   clanId,
