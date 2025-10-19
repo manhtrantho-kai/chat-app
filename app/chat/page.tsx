@@ -8,6 +8,7 @@ import { ChannelSidebar } from "@/components/channel-sidebar"
 import { ChatArea } from "@/components/chat-area"
 import { apiClient } from "@/lib/api"
 import type { Clan, Category, Channel } from "@/lib/types"
+import { Hash } from "lucide-react"
 
 export default function ChatPage() {
   const router = useRouter()
@@ -142,18 +143,30 @@ export default function ChatPage() {
         selectedChannelId={selectedChannelId || ""}
         onSelectChannel={setSelectedChannelId}
       />
-      {selectedClan ? (
-        <ChatArea
-          channelId={selectedChannelId || ""}
-          channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
-        />
-      ) : (
+      {!selectedClan ? (
         <div className="flex flex-1 items-center justify-center bg-[#313338]">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-2">Chào mừng đến với Discord!</h2>
             <p className="text-[#b5bac1] mb-4">Tạo server đầu tiên của bạn để bắt đầu</p>
           </div>
         </div>
+      ) : !selectedChannelId ? (
+        <div className="flex flex-1 items-center justify-center bg-[#313338]">
+          <div className="text-center">
+            <Hash className="h-16 w-16 text-[#80848e] mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">Chọn một channel</h2>
+            <p className="text-[#b5bac1]">
+              {clanChannels.length === 0
+                ? "Chưa có channel nào. Tạo channel đầu tiên để bắt đầu trò chuyện!"
+                : "Chọn một channel từ sidebar để bắt đầu trò chuyện"}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <ChatArea
+          channelId={selectedChannelId}
+          channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
+        />
       )}
     </div>
   )
