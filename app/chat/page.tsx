@@ -135,20 +135,18 @@ export default function ChatPage() {
   return (
     <div className="flex h-screen overflow-hidden dark">
       <ServerSidebar clans={clans} selectedClanId={selectedClanId || ""} onSelectClan={setSelectedClanId} />
+      <ChannelSidebar
+        clan={selectedClan}
+        categories={clanCategories}
+        channels={clanChannels}
+        selectedChannelId={selectedChannelId || ""}
+        onSelectChannel={setSelectedChannelId}
+      />
       {selectedClan ? (
-        <>
-          <ChannelSidebar
-            clan={selectedClan}
-            categories={clanCategories}
-            channels={clanChannels}
-            selectedChannelId={selectedChannelId || ""}
-            onSelectChannel={setSelectedChannelId}
-          />
-          <ChatArea
-            channelId={selectedChannelId || ""}
-            channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
-          />
-        </>
+        <ChatArea
+          channelId={selectedChannelId || ""}
+          channelName={clanChannels.find((c) => c.id === selectedChannelId)?.name || ""}
+        />
       ) : (
         <div className="flex flex-1 items-center justify-center bg-[#313338]">
           <div className="text-center">
