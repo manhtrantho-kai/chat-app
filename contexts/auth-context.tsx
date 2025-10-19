@@ -37,7 +37,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    if (token) {
+    const userId = localStorage.getItem("userId")
+
+    if (token && userId) {
       if (token === MOCK_ADMIN.token) {
         setUser(MOCK_ADMIN.user)
         setIsLoading(false)
@@ -45,10 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       apiClient
-        .getCurrentUser(token)
+        .getCurrentUser(userId)
         .then((userData) => setUser(userData as User))
         .catch(() => {
           localStorage.removeItem("token")
+          localStorage.removeItem("userId")
         })
         .finally(() => setIsLoading(false))
     } else {
@@ -59,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (username: string, password: string) => {
     if (username === MOCK_ADMIN.username && password === MOCK_ADMIN.password) {
       localStorage.setItem("token", MOCK_ADMIN.token)
+      localStorage.setItem("userId", MOCK_ADMIN.user.id)
       setUser(MOCK_ADMIN.user)
       router.push("/chat")
       return
@@ -66,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const response = await apiClient.login(username, password)
     localStorage.setItem("token", response.token)
+    localStorage.setItem("userId", response.user.id)
     console.log("token", response.token)
     setUser(response.user)
     router.push("/chat")
@@ -74,12 +79,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (username: string, email: string, password: string) => {
     const response = await apiClient.register(username, email, password)
     localStorage.setItem("token", response.token)
+    localStorage.setItem("userId", response.user.id)
     setUser(response.user)
     router.push("/chat")
   }
 
   const logout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("userId")
     setUser(null)
     router.push("/login")
   }

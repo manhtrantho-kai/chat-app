@@ -153,12 +153,8 @@ export class ApiClient {
     return data
   }
 
-  async getCurrentUser(token: string) {
-    return this.request("/auth/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+  async getCurrentUser(userId: string) {
+    return this.request(`/user/${userId}`)
   }
 
   // User endpoints
