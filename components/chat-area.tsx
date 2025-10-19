@@ -7,6 +7,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { MessageList } from "@/components/message-list"
 import { MessageInput } from "@/components/message-input"
 import { mockMessages } from "@/lib/mock-data"
+import { apiClient } from "@/lib/api"
+import { useAuth } from "@/contexts/auth-context"
 import type { Message } from "@/lib/types"
 
 interface ChatAreaProps {
@@ -15,29 +17,55 @@ interface ChatAreaProps {
 }
 
 export function ChatArea({ channelId, channelName }: ChatAreaProps) {
-  const [messages, setMessages] = useState<Message[]>(mockMessages)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const { user } = useAuth()
 
   useEffect(() => {
-    // Simulate loading messages for the selected channel
-    setMessages(mockMessages.filter((m) => m.channelId === channelId))
+    const fetchMessages = async () => {
+      if (!channelId) return
+
+      setIsLoading(true)
+      try {
+        console.log("[v0] Fetching messages for channel:", channelId)
+        const data = await apiClient.getMessages(channelId)
+        console.log("[v0] Messages fetched:", data)
+        setMessages(data as Message[])
+      } catch (error) {
+        console.error("[v0] Failed to fetch messages:", error)
+        // Fallback to mock data
+        const filteredMockMessages = mockMessages.filter((m) => m.channelId === channelId)
+        console.log("[v0] Using mock messages:", filteredMockMessages.length)
+        setMessages(filteredMockMessages)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchMessages()
   }, [channelId])
 
-  const handleSendMessage = (content: string, attachments?: File[], stickerId?: string) => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
+  const handleSendMessage = async (content: string, attachments?: File[], stickerId?: string) => {
+    if (!user) {
+      console.error("[v0] No user logged in")
+      return
+    }
+
+    const optimisticMessage: Message = {
+      id: `temp-${Date.now()}`,
       content,
-      authorId: "1",
+      authorId: user.id,
       author: {
-        id: "1",
-        username: "CurrentUser",
-        avatar: "/diverse-user-avatars.png",
-        status: "online",
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar || "/placeholder.svg",
+        status: user.status,
       },
       channelId,
       createdAt: new Date().toISOString(),
       attachments: attachments?.map((file, index) => ({
-        id: `${Date.now()}-${index}`,
+        id: `temp-${Date.now()}-${index}`,
         url: URL.createObjectURL(file),
         filename: file.name,
         contentType: file.type,
@@ -52,7 +80,24 @@ export function ChatArea({ channelId, channelName }: ChatAreaProps) {
         : undefined,
     }
 
-    setMessages((prev) => [...prev, newMessage])
+    setMessages((prev) => [...prev, optimisticMessage])
+
+    try {
+      if (stickerId) {
+        console.log("[v0] Sending sticker:", stickerId)
+        await apiClient.sendSticker(channelId, stickerId)
+      } else {
+        console.log("[v0] Sending message:", { content, attachments: attachments?.length })
+        await apiClient.sendMessage(channelId, content, attachments)
+      }
+      console.log("[v0] Message sent successfully")
+
+      const data = await apiClient.getMessages(channelId)
+      setMessages(data as Message[])
+    } catch (error) {
+      console.error("[v0] Failed to send message:", error)
+      // Keep the optimistic message in UI even if API fails
+    }
   }
 
   return (
@@ -82,7 +127,13 @@ export function ChatArea({ channelId, channelName }: ChatAreaProps) {
 
       {/* Messages Area */}
       <ScrollArea className="flex-1" ref={scrollRef}>
-        <MessageList messages={messages} />
+        {isLoading ? (
+          <div className="flex h-full items-center justify-center">
+            <div className="text-[#b5bac1]">Đang tải tin nhắn...</div>
+          </div>
+        ) : (
+          <MessageList messages={messages} currentUserId={user?.id} />
+        )}
       </ScrollArea>
 
       {/* Message Input */}

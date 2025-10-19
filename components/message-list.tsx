@@ -7,9 +7,10 @@ import { vi } from "date-fns/locale"
 
 interface MessageListProps {
   messages: Message[]
+  currentUserId?: string
 }
 
-export function MessageList({ messages }: MessageListProps) {
+export function MessageList({ messages, currentUserId }: MessageListProps) {
   if (messages.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -28,6 +29,7 @@ export function MessageList({ messages }: MessageListProps) {
         const timeDiff =
           index > 0 ? new Date(message.createdAt).getTime() - new Date(messages[index - 1].createdAt).getTime() : 0
         const showTimestamp = showAvatar || timeDiff > 300000 // 5 minutes
+        const isCurrentUser = currentUserId && message.authorId === currentUserId
 
         return (
           <div key={message.id} className="group relative">
@@ -41,7 +43,10 @@ export function MessageList({ messages }: MessageListProps) {
                 </Avatar>
                 <div className="flex-1">
                   <div className="mb-1 flex items-baseline gap-2">
-                    <span className="text-base font-semibold text-white">{message.author.username}</span>
+                    <span className="text-base font-semibold text-white">
+                      {message.author.username}
+                      {isCurrentUser && <span className="ml-2 text-xs text-[#949ba4]">(Bạn)</span>}
+                    </span>
                     <span className="text-xs text-[#949ba4]">
                       {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true, locale: vi })}
                     </span>
@@ -98,6 +103,15 @@ export function MessageList({ messages }: MessageListProps) {
                           )}
                         </div>
                       ))}
+                    </div>
+                  )}
+                  {message.sticker && (
+                    <div className="mt-2">
+                      <img
+                        src={message.sticker.url || "/placeholder.svg"}
+                        alt={message.sticker.name}
+                        className="h-40 w-40"
+                      />
                     </div>
                   )}
                 </div>
