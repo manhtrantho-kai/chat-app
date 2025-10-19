@@ -194,6 +194,12 @@ export class ApiClient {
     })
   }
 
+  async deleteClan(clanId: string) {
+    return this.request(`/clans/${clanId}`, {
+      method: "DELETE",
+    })
+  }
+
   // Category management endpoints
   async createCategory(clanId: string, name: string, position: number) {
     return this.request(`/clans/${clanId}/categories`, {
@@ -202,11 +208,23 @@ export class ApiClient {
     })
   }
 
+  async deleteCategory(categoryId: string) {
+    return this.request(`/categories/${categoryId}`, {
+      method: "DELETE",
+    })
+  }
+
   // Channel management endpoints
   async createChannel(categoryId: string, name: string, type: string, position: number) {
     return this.request(`/category/${categoryId}/channels`, {
       method: "POST",
       body: JSON.stringify({ name, type, position }),
+    })
+  }
+
+  async deleteChannel(channelId: string) {
+    return this.request(`/channels/${channelId}`, {
+      method: "DELETE",
     })
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown, Hash, Volume2, Settings, UserPlus, Plus, LogOut } from "lucide-react"
+import { ChevronDown, Hash, Volume2, Settings, UserPlus, Plus, LogOut, MoreVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -16,6 +16,10 @@ import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { CreateChannelDialog } from "@/components/create-channel-dialog"
 import { CreateCategoryDialog } from "@/components/create-category-dialog"
+import { ClanInfoDialog } from "@/components/clan-info-dialog"
+import { CategoryInfoDialog } from "@/components/category-info-dialog"
+import { ChannelInfoDialog } from "@/components/channel-info-dialog"
+import { useState } from "react"
 
 interface ChannelSidebarProps {
   clan?: Clan
@@ -34,6 +38,9 @@ export function ChannelSidebar({
 }: ChannelSidebarProps) {
   const { user, logout } = useAuth()
   const router = useRouter()
+  const [showClanInfo, setShowClanInfo] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+  const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null)
 
   return (
     <div className="flex w-60 flex-col bg-[#2b2d31]">
@@ -64,7 +71,10 @@ export function ChannelSidebar({
                 <UserPlus className="mr-2 h-4 w-4" />
                 Invite People
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-[#949ba4] hover:bg-[#5865f2] hover:text-white focus:bg-[#5865f2] focus:text-white">
+              <DropdownMenuItem
+                className="text-[#949ba4] hover:bg-[#5865f2] hover:text-white focus:bg-[#5865f2] focus:text-white"
+                onClick={() => setShowClanInfo(true)}
+              >
                 <Settings className="mr-2 h-4 w-4" />
                 Server Settings
               </DropdownMenuItem>
@@ -102,20 +112,30 @@ export function ChannelSidebar({
                             {category.name}
                           </span>
                         </div>
-                        <CreateChannelDialog
-                          clanId={clan.id}
-                          categoryId={category.id}
-                          onChannelCreated={() => window.location.reload()}
-                          trigger={
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-4 w-4 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
-                            >
-                              <Plus className="h-4 w-4 text-[#80848e]" />
-                            </Button>
-                          }
-                        />
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-4 w-4 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
+                            onClick={() => setSelectedCategory(category)}
+                          >
+                            <MoreVertical className="h-4 w-4 text-[#80848e]" />
+                          </Button>
+                          <CreateChannelDialog
+                            clanId={clan.id}
+                            categoryId={category.id}
+                            onChannelCreated={() => window.location.reload()}
+                            trigger={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-4 w-4 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
+                              >
+                                <Plus className="h-4 w-4 text-[#80848e]" />
+                              </Button>
+                            }
+                          />
+                        </div>
                       </div>
 
                       {/* Channels in Category */}
@@ -125,23 +145,42 @@ export function ChannelSidebar({
                         </div>
                       ) : (
                         categoryChannels.map((channel) => (
-                          <Button
+                          <div
                             key={channel.id}
-                            variant="ghost"
-                            className={cn(
-                              "mb-0.5 h-8 w-full justify-start gap-1.5 rounded px-2 text-[#80848e] hover:bg-[#35373c] hover:text-[#dbdee1]",
-                              selectedChannelId === channel.id &&
-                                "bg-[#404249] text-white hover:bg-[#404249] hover:text-white",
-                            )}
-                            onClick={() => onSelectChannel(channel.id)}
+                            className="group relative"
+                            onContextMenu={(e) => {
+                              e.preventDefault()
+                              setSelectedChannel(channel)
+                            }}
                           >
-                            {channel.type === "text" ? (
-                              <Hash className="h-5 w-5 flex-shrink-0" />
-                            ) : (
-                              <Volume2 className="h-5 w-5 flex-shrink-0" />
-                            )}
-                            <span className="truncate text-base">{channel.name}</span>
-                          </Button>
+                            <Button
+                              variant="ghost"
+                              className={cn(
+                                "mb-0.5 h-8 w-full justify-start gap-1.5 rounded px-2 text-[#80848e] hover:bg-[#35373c] hover:text-[#dbdee1]",
+                                selectedChannelId === channel.id &&
+                                  "bg-[#404249] text-white hover:bg-[#404249] hover:text-white",
+                              )}
+                              onClick={() => onSelectChannel(channel.id)}
+                            >
+                              {channel.type === "text" ? (
+                                <Hash className="h-5 w-5 flex-shrink-0" />
+                              ) : (
+                                <Volume2 className="h-5 w-5 flex-shrink-0" />
+                              )}
+                              <span className="truncate text-base">{channel.name}</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-1 top-1 h-6 w-6 opacity-0 transition-opacity hover:text-[#dbdee1] group-hover:opacity-100"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setSelectedChannel(channel)
+                              }}
+                            >
+                              <MoreVertical className="h-4 w-4 text-[#80848e]" />
+                            </Button>
+                          </div>
                         ))
                       )}
                     </div>
@@ -193,6 +232,38 @@ export function ChannelSidebar({
           <LogOut className="h-5 w-5" />
         </Button>
       </div>
+
+      {/* Clan Info Dialog */}
+      {clan && (
+        <ClanInfoDialog
+          clan={clan}
+          open={showClanInfo}
+          onOpenChange={setShowClanInfo}
+          onClanDeleted={() => window.location.reload()}
+        />
+      )}
+
+      {/* Category Info Dialog */}
+      {selectedCategory && clan && (
+        <CategoryInfoDialog
+          category={selectedCategory}
+          clan={clan}
+          open={!!selectedCategory}
+          onOpenChange={(open) => !open && setSelectedCategory(null)}
+          onCategoryDeleted={() => window.location.reload()}
+        />
+      )}
+
+      {/* Channel Info Dialog */}
+      {selectedChannel && clan && (
+        <ChannelInfoDialog
+          channel={selectedChannel}
+          clan={clan}
+          open={!!selectedChannel}
+          onOpenChange={(open) => !open && setSelectedChannel(null)}
+          onChannelDeleted={() => window.location.reload()}
+        />
+      )}
     </div>
   )
 }
